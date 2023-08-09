@@ -1,0 +1,6 @@
+exchange_rate_converter.settings:
+  title: Fixer.io Settings
+  description: Contains fixer.io credentials
+  parent: system.admin_config_system
+  route_name: exchange_rate_converter.settings
+  weight: 10

@@ -1,0 +1,7 @@
+exchange_rate_converter.settings:
+  path: '/admin/config/system/exchage-converter'
+  defaults:
+    _title: 'Fixer.io Settings'
+    _form: 'Drupal\exchange_rate_converter\Form\SettingsForm'
+  requirements:
+    _permission: 'administer site configuration'

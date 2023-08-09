@@ -1,0 +1,5 @@
+name: Rate converter
+type: module
+description: Provides additional functionality to convert rates
+package: Custom
+core_version_requirement: ^9 || ^10
