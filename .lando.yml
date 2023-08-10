@@ -2,3 +2,28 @@ name: exchange
 recipe: drupal9
 config:
   webroot: web
+services:
+  appserver:
+    xdebug: true
+    build_as_root:
+      - rm -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && /etc/init.d/apache2 reload
+    type: php:8.1
+  phpmyadmin:
+    type: phpmyadmin
+    hosts:
+      - database
+tooling:
+  xdebug-on:
+    service: appserver
+    description: Enable xdebug for Apache.
+    cmd: rm -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && docker-php-ext-enable xdebug && /etc/init.d/apache2 reload && echo "Xdebug enabled"
+    user: root
+
+  xdebug-off:
+    service: appserver
+    description: Disable xdebug for Apache.
+    cmd: rm -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && /etc/init.d/apache2 reload && echo "Xdebug disabled"
+    user: root
+proxy:
+  phpmyadmin:
+    - phpmyadmin.exchange.lndo.site

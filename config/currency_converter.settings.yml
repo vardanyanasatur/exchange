@@ -1,0 +1,8 @@
+access_key: a37b2c9e28a21c858e23c86be7c01502
+api_host: 'http://data.fixer.io/api/'
+allowed_rates:
+  AED: AED
+  AFN: AFN
+  AMD: AMD
+  RUB: RUB
+  USD: USD

@@ -1,0 +1,3 @@
+administer currency:
+  title: 'Administer currency settings'
+  restrict access: true

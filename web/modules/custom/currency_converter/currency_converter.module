@@ -1,0 +1,108 @@
+<?php
+
+/**
+ * @file
+ * Provides a currency entity type.
+ */
+
+use Drupal\Core\Render\Element;
+use Drupal\currency_converter\Entity\Currency;
+use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function currency_converter_theme() {
+  return [
+    'currency' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for currency templates.
+ *
+ * Default template: currency.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the currency information and
+ *   any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_currency(array &$variables) {
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_user_cancel().
+ */
+function currency_converter_user_cancel($edit, UserInterface $account, $method) {
+  switch ($method) {
+    case 'user_cancel_block_unpublish':
+      // Unpublish currencies.
+      $storage = Drupal::entityTypeManager()->getStorage('currency');
+      $currency_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->condition('status', 1)
+        ->execute();
+      foreach ($storage->loadMultiple($currency_ids) as $currency) {
+        $currency->set('status', FALSE);
+        $currency->save();
+      }
+      break;
+
+    case 'user_cancel_reassign':
+      // Anonymize currencies.
+      $storage = Drupal::entityTypeManager()->getStorage('currency');
+      $currency_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->execute();
+      foreach ($storage->loadMultiple($currency_ids) as $currency) {
+        $currency->setOwnerId(0);
+        $currency->save();
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_predelete() for user entities.
+ */
+function currency_converter_user_predelete(UserInterface $account) {
+  // Delete currencies.
+  $storage = Drupal::entityTypeManager()->getStorage('currency');
+  $currency_ids = $storage->getQuery()
+    ->condition('uid', $account->id())
+    ->execute();
+  $currencies = $storage->loadMultiple($currency_ids);
+  $storage->delete($currencies);
+  // Delete old revisions.
+  $currency_ids = $storage->getQuery()
+    ->allRevisions()
+    ->condition('uid', $account->id())
+    ->execute();
+  foreach (array_keys($currency_ids) as $revision_id) {
+    $storage->deleteRevision($revision_id);
+  }
+}
+
+
+/**
+ * Implements hook_cron().
+ */
+function currency_converter_cron() {
+  $state = \Drupal::state();
+  $last_execution = !empty($state->get('currency_converter_last_cron')) ? $state->get('currency_converter_last_cron') : 0;
+  $one_day = 24 * 60 * 60;
+  $current_time = \Drupal::time()->getRequestTime();
+
+  if ($current_time - $last_execution >= $one_day) {
+    \Drupal::service('currency_converter.currency_service')->importCurrency();
+    $state->set('currency_converter_last_cron', $current_time);
+  }
+}

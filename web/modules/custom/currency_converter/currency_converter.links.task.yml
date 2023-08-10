@@ -1,0 +1,22 @@
+entity.currency.settings:
+  title: 'Settings'
+  route_name: entity.currency.settings
+  base_route: entity.currency.settings
+entity.currency.view:
+  title: 'View'
+  route_name: entity.currency.canonical
+  base_route: entity.currency.canonical
+entity.currency.edit_form:
+  title: 'Edit'
+  route_name: entity.currency.edit_form
+  base_route: entity.currency.canonical
+entity.currency.delete_form:
+  title: 'Delete'
+  route_name: entity.currency.delete_form
+  base_route: entity.currency.canonical
+  weight: 10
+entity.currency.collection:
+  title: 'Currencies'
+  route_name: entity.currency.collection
+  base_route: system.admin_content
+  weight: 10

@@ -1,0 +1,14 @@
+entity.currency.settings:
+  path: 'admin/structure/currency'
+  defaults:
+    _form: '\Drupal\currency_converter\Form\CurrencySettingsForm'
+    _title: 'Currency'
+  requirements:
+    _permission: 'administer currency'
+currency_converter.settings:
+  path: 'admin/config/system/currency-api/settings'
+  defaults:
+    _title: 'Fixer.io Settings'
+    _form: 'Drupal\currency_converter\Form\CurrencyApiSettingsForm'
+  requirements:
+    _permission: 'administer site configuration'

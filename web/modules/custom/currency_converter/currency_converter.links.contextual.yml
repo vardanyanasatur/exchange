@@ -1,0 +1,10 @@
+entity.currency.edit_form:
+  route_name: entity.currency.edit_form
+  group: currency
+  title: Edit
+
+entity.currency.delete_form:
+  route_name: entity.currency.delete_form
+  group: currency
+  title: Delete
+  weight: 10
